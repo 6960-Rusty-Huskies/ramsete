@@ -9,7 +9,6 @@ package frc.robot;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.List;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -17,12 +16,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -62,9 +56,18 @@ public class RobotContainer {
     m_robotDrive.setDefaultCommand(
         // A split-stick arcade command, with forward/backward controlled by the left
         // hand, and turning controlled by the right.
+            /*
         new RunCommand(() -> m_robotDrive
             .arcadeDrive(m_driverController.getY(GenericHID.Hand.kLeft),
-                         m_driverController.getX(GenericHID.Hand.kRight)), m_robotDrive));
+                         m_driverController.getX(GenericHID.Hand.kRight) * -1), m_robotDrive));
+
+             */
+
+
+    new RunCommand(() -> m_robotDrive
+            .tankDrive(m_driverController.getY(GenericHID.Hand.kLeft),
+                    m_driverController.getY(GenericHID.Hand.kRight)), m_robotDrive));
+
 
   }
 
@@ -76,9 +79,12 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Drive at half speed when the right bumper is held
+    /*
     new JoystickButton(m_driverController, Button.kBumperRight.value)
         .whenPressed(() -> m_robotDrive.setMaxOutput(0.5))
         .whenReleased(() -> m_robotDrive.setMaxOutput(1));
+
+     */
 
   }
 
@@ -143,9 +149,10 @@ public class RobotContainer {
           exampleTrajectory,
           m_robotDrive::getPose,
           new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
-          new SimpleMotorFeedforward(DriveConstants.ksVolts,
-                                    DriveConstants.kvVoltSecondsPerMeter,
-                                    DriveConstants.kaVoltSecondsSquaredPerMeter),
+          new SimpleMotorFeedforward(
+                  DriveConstants.ksVolts,
+                  DriveConstants.kvVoltSecondsPerMeter,
+                  DriveConstants.kaVoltSecondsSquaredPerMeter),
           DriveConstants.kDriveKinematics,
           m_robotDrive::getWheelSpeeds,
           new PIDController(DriveConstants.kPDriveVel, 0, 0),
