@@ -7,7 +7,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.controller.*;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.trajectory.constraint.*;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -52,6 +54,15 @@ public final class Constants {
 
     // Example value only - as above, this must be tuned for your drive!
     public static final double kPDriveVel = 9.93;
+
+    public static final DifferentialDriveVoltageConstraint autoVoltageConstraint =
+            new DifferentialDriveVoltageConstraint(
+                    new SimpleMotorFeedforward(
+                            Constants.DriveConstants.ksVolts,
+                            Constants.DriveConstants.kvVoltSecondsPerMeter,
+                            Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                    Constants.DriveConstants.kDriveKinematics,
+                    10);
   }
 
   public static final class OIConstants {

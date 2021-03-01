@@ -19,21 +19,13 @@ import frc.robot.Constants;
 
 public class DriveSubsystem extends SubsystemBase {
   // The motors on the left side of the drive.
-  WPI_TalonSRX leftMotor1 = new WPI_TalonSRX(Constants.DriveConstants.kLeftMotor1Port);
-  private final SpeedControllerGroup m_leftMotors =
-          new SpeedControllerGroup(
-                  leftMotor1,
-                  new WPI_TalonSRX(Constants.DriveConstants.kLeftMotor2Port));
+  private final SpeedControllerGroup m_leftMotors;
 
   // The motors on the right side of the drive.
-  WPI_TalonSRX rightMotor1 = new WPI_TalonSRX(Constants.DriveConstants.kRightMotor1Port);
-  private final SpeedControllerGroup m_rightMotors =
-          new SpeedControllerGroup(
-                  rightMotor1,
-                  new WPI_TalonSRX(Constants.DriveConstants.kRightMotor2Port));
+  private final SpeedControllerGroup m_rightMotors;
 
   // The robot's drive
-  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
+  private final DifferentialDrive m_drive;
 
   // The left-side drive encoder
   private final Encoder m_leftEncoder =
@@ -50,21 +42,32 @@ public class DriveSubsystem extends SubsystemBase {
                   Constants.DriveConstants.kRightEncoderReversed);
 
   // The gyro sensor
-  private final PigeonIMU m_gyro = new PigeonIMU(leftMotor1);
+  private final PigeonIMU m_gyro;
 
   // Odometry class for tracking robot pose
   private final DifferentialDriveOdometry m_odometry;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
+    WPI_TalonSRX leftMotor1 = new WPI_TalonSRX(Constants.DriveConstants.kLeftMotor1Port);
+    WPI_TalonSRX leftMotor2 = new WPI_TalonSRX(Constants.DriveConstants.kLeftMotor2Port);
+    m_leftMotors = new SpeedControllerGroup(leftMotor1, leftMotor2);
     m_leftMotors.setInverted(true);
+
+    WPI_TalonSRX rightMotor1 = new WPI_TalonSRX(Constants.DriveConstants.kRightMotor1Port);
+    WPI_TalonSRX rightMotor2 = new WPI_TalonSRX(Constants.DriveConstants.kRightMotor2Port);
+    m_rightMotors = new SpeedControllerGroup(rightMotor1, rightMotor2);
     m_rightMotors.setInverted(true);
+
+    m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
     // Sets the distance per pulse for the encoders
     m_leftEncoder.setDistancePerPulse(Constants.DriveConstants.kEncoderDistancePerPulse);
     m_rightEncoder.setDistancePerPulse(Constants.DriveConstants.kEncoderDistancePerPulse);
-
     resetEncoders();
+
+    m_gyro = new PigeonIMU(leftMotor1);
+
     m_odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
   }
 

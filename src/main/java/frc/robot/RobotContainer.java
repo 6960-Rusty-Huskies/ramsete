@@ -5,6 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.wpilibj.XboxController.Button;
+import static frc.robot.Constants.DriveConstants.autoVoltageConstraint;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -76,16 +77,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-
-    // Create a voltage constraint to ensure we don't accelerate too fast
-    var autoVoltageConstraint =
-            new DifferentialDriveVoltageConstraint(
-                    new SimpleMotorFeedforward(
-                            Constants.DriveConstants.ksVolts,
-                            Constants.DriveConstants.kvVoltSecondsPerMeter,
-                            Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
-                    Constants.DriveConstants.kDriveKinematics,
-                    10);
 
     // Create config for trajectory
     TrajectoryConfig config =
