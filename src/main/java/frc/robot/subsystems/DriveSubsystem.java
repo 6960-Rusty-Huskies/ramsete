@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+import static frc.robot.Constants.DriveConstants.kEncoderDistancePerPulse;
+
 public class DriveSubsystem extends SubsystemBase {
   // The motors on the left side of the drive.
   private final SpeedControllerGroup m_leftMotors;
@@ -62,8 +64,8 @@ public class DriveSubsystem extends SubsystemBase {
     m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
     // Sets the distance per pulse for the encoders
-    m_leftEncoder.setDistancePerPulse(Constants.DriveConstants.kEncoderDistancePerPulse);
-    m_rightEncoder.setDistancePerPulse(Constants.DriveConstants.kEncoderDistancePerPulse);
+    m_leftEncoder.setDistancePerPulse(kEncoderDistancePerPulse);
+    m_rightEncoder.setDistancePerPulse(kEncoderDistancePerPulse);
     resetEncoders();
 
     m_gyro = new PigeonIMU(leftMotor1);

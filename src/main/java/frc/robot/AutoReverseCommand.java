@@ -12,7 +12,7 @@ public class AutoReverseCommand extends PIDCommand {
         super(new PIDController(Constants.DriveConstants.kTurnP, Constants.DriveConstants.kTurnI, Constants.DriveConstants.kTurnD),
                 drive::getHeading,
                 0,
-                output -> drive.arcadeDrive(-.3, output),
+                output -> drive.arcadeDrive(.5, output),
                 drive);
         this.drive = drive;
         drive.zeroHeading();
@@ -29,6 +29,6 @@ public class AutoReverseCommand extends PIDCommand {
 
     @Override
     public boolean isFinished() {
-        return drive.getAverageEncoderDistance() >= -3;
+        return drive.getAverageEncoderDistance() <= 0;
     }
 }
