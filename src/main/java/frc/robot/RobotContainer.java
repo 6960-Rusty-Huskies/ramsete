@@ -18,9 +18,7 @@ import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -77,6 +75,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
 
+    /*
     // Create config for trajectory
     TrajectoryConfig config =
             new TrajectoryConfig(
@@ -160,5 +159,11 @@ public class RobotContainer {
 
     // Run path following command, then stop at the end.
     return ramseteForwardCommand.andThen(ramseteBackwardCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0)));
+
+     */
+
+
+
+    return new AutoCommand(m_robotDrive).andThen(new WaitCommand(2)).andThen(new AutoReverseCommand(m_robotDrive));
   }
 }

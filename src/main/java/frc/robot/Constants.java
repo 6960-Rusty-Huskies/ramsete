@@ -63,6 +63,13 @@ public final class Constants {
                             Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
                     Constants.DriveConstants.kDriveKinematics,
                     10);
+
+    public static final double kTurnP = 1;
+    public static final double kTurnI = 0;
+    public static final double kTurnD = 0;
+    public static final double kTurnToleranceDeg = 5;
+    public static final double kTurnRateToleranceDegPerS = 10; // degrees per second
+
   }
 
   public static final class OIConstants {
