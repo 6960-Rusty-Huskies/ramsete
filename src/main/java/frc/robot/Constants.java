@@ -48,10 +48,10 @@ public final class Constants {
         // for *your* robot's drive.
         // The Robot Characterization Toolsuite provides a convenient tool for obtaining these
         // values for your robot.
-        public static final double ksVolts = 1.15;
-        public static final double kvVoltSecondsPerMeter = 2.86;
-        public static final double kaVoltSecondsSquaredPerMeter = 0.0804;
-        public static final double kPDriveVel = 1;
+        public static final double ksVolts = .99242;
+        public static final double kvVoltSecondsPerMeter = 2.8769;
+        public static final double kaVoltSecondsSquaredPerMeter = 0.98951;
+        public static final double kPDriveVel = 2.4506;
 
         /*
         Original values
