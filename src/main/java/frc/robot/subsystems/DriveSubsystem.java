@@ -112,7 +112,6 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public void resetOdometry(Pose2d pose) {
         resetEncoders();
-        zeroHeading();
         m_odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
     }
 
@@ -133,8 +132,8 @@ public class DriveSubsystem extends SubsystemBase {
      * @param rightVolts the commanded right output
      */
     public void tankDriveVolts(double leftVolts, double rightVolts) {
-        m_leftMotors.setVoltage(-leftVolts);
-        m_rightMotors.setVoltage(rightVolts);
+        m_leftMotors.setVoltage(leftVolts);
+        m_rightMotors.setVoltage(-rightVolts);
         m_drive.feed();
     }
 
