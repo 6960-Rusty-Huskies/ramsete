@@ -56,12 +56,12 @@ public class DriveSubsystem extends SubsystemBase {
         WPI_TalonSRX leftMotor1 = new WPI_TalonSRX(Constants.DriveConstants.kLeftMotor1Port);
         WPI_TalonSRX leftMotor2 = new WPI_TalonSRX(Constants.DriveConstants.kLeftMotor2Port);
         m_leftMotors = new SpeedControllerGroup(leftMotor1, leftMotor2);
-        m_leftMotors.setInverted(false);
+        m_leftMotors.setInverted(true);
 
         WPI_TalonSRX rightMotor1 = new WPI_TalonSRX(Constants.DriveConstants.kRightMotor1Port);
         WPI_TalonSRX rightMotor2 = new WPI_TalonSRX(Constants.DriveConstants.kRightMotor2Port);
         m_rightMotors = new SpeedControllerGroup(rightMotor1, rightMotor2);
-        m_rightMotors.setInverted(false);
+        m_rightMotors.setInverted(true);
 
         m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
@@ -71,6 +71,7 @@ public class DriveSubsystem extends SubsystemBase {
         resetEncoders();
 
         m_gyro = new PigeonIMU(rightMotor1);
+        zeroHeading();
 
         m_odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
     }
@@ -122,7 +123,7 @@ public class DriveSubsystem extends SubsystemBase {
      * @param rot the commanded rotation
      */
     public void arcadeDrive(double fwd, double rot) {
-        m_drive.arcadeDrive(fwd, rot);
+        m_drive.arcadeDrive(-fwd, -rot);
     }
 
     /**
@@ -132,8 +133,8 @@ public class DriveSubsystem extends SubsystemBase {
      * @param rightVolts the commanded right output
      */
     public void tankDriveVolts(double leftVolts, double rightVolts) {
-        m_leftMotors.setVoltage(-leftVolts);
-        m_rightMotors.setVoltage(rightVolts);
+        m_leftMotors.setVoltage(leftVolts);
+        m_rightMotors.setVoltage(-rightVolts);
         m_drive.feed();
     }
 
