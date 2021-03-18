@@ -48,10 +48,12 @@ public final class Constants {
         // for *your* robot's drive.
         // The Robot Characterization Toolsuite provides a convenient tool for obtaining these
         // values for your robot.
+        /*
         public static final double ksVolts = 1.102;
         public static final double kvVoltSecondsPerMeter = 1.369;
         public static final double kaVoltSecondsSquaredPerMeter = 0.005;
         public static final double kPDriveVel = 2.4506;
+         */
 
         // Newer values from Tyler
         /*
@@ -70,12 +72,10 @@ public final class Constants {
          */
 
         // Last years stick bot values
-        /*
         public static final double ksVolts = 0.878;
         public static final double kvVoltSecondsPerMeter = 3.16;
         public static final double kaVoltSecondsSquaredPerMeter = 0.261;
         public static final double kPDriveVel = 9.93;
-         */
 
 
         public static final DifferentialDriveVoltageConstraint autoVoltageConstraint =

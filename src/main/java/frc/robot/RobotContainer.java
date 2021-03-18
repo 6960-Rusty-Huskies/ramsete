@@ -145,6 +145,9 @@ public class RobotContainer {
                         m_robotDrive::tankDriveVolts,
                         m_robotDrive);
 
+        m_robotDrive.zeroHeading();
+        m_robotDrive.resetEncoders();
+
         return ramseteSimpleMoveForwardCommand;
     }
 }

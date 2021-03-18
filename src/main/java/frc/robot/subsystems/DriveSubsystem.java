@@ -70,7 +70,7 @@ public class DriveSubsystem extends SubsystemBase {
         m_rightEncoder.setDistancePerPulse(kEncoderDistancePerPulse);
         resetEncoders();
 
-        m_gyro = new PigeonIMU(rightMotor1);
+        m_gyro = new PigeonIMU(leftMotor1);
         zeroHeading();
 
         m_odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
