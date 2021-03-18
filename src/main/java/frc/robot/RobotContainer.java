@@ -5,11 +5,13 @@
 package frc.robot;
 
 import static edu.wpi.first.wpilibj.XboxController.Button;
+import static frc.robot.Constants.DriveConstants.autoVoltageConstraint;
 
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.geometry.*;
 import edu.wpi.first.wpilibj.trajectory.*;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -17,6 +19,7 @@ import frc.robot.subsystems.DriveSubsystem;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -72,17 +75,6 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
 
         /*
-        TrajectoryConfig config =
-                new TrajectoryConfig(
-                        Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-                        Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-                        // Add kinematics to ensure max speed is actually obeyed
-                        .setKinematics(Constants.DriveConstants.kDriveKinematics)
-                        // Apply the voltage constraint
-                        .addConstraint(autoVoltageConstraint);
-
-         */
-
         try {
             Trajectory trajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/paths/barrels.wpilib.json"));
 
@@ -113,32 +105,32 @@ public class RobotContainer {
             return null;
         }
 
-        /*
-        TrajectoryConfig configBackward =
-                new TrajectoryConfig(
-                        Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-                        Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-                        // Add kinematics to ensure max speed is actually obeyed
-                        .setKinematics(Constants.DriveConstants.kDriveKinematics)
-                        // Apply the voltage constraint
-                        .addConstraint(autoVoltageConstraint)
-                        .setReversed(true);
+         */
 
 
-        Trajectory moveBackward =
+        TrajectoryConfig config =
+        new TrajectoryConfig(
+                Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+                Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+                // Add kinematics to ensure max speed is actually obeyed
+                .setKinematics(Constants.DriveConstants.kDriveKinematics)
+                // Apply the voltage constraint
+                .addConstraint(autoVoltageConstraint);
+
+        Trajectory moveForward =
                 TrajectoryGenerator.generateTrajectory(
                         // Start at the origin facing the +X direction
-                        new Pose2d(3, 0, new Rotation2d(0)),
-                        // Pass through these two interior waypoints, making an 's' curve path
-                        List.of(new Translation2d(2, 0), new Translation2d(1, 0)),
-                        // End 3 meters straight back of where we started, facing forward
                         new Pose2d(0, 0, new Rotation2d(0)),
+                        // Pass through these two interior waypoints, making an 's' curve path
+                        List.of(new Translation2d(2, 2), new Translation2d(4, -2)),
+                        // End 3 meters straight ahead, facing forward
+                        new Pose2d(6, 0, new Rotation2d(0)),
                         // Pass config
-                        configBackward);
+                        config);
 
-        RamseteCommand ramseteBackwardCommand =
+        RamseteCommand ramseteSimpleMoveForwardCommand =
                 new RamseteCommand(
-                        moveBackward,
+                        moveForward,
                         m_robotDrive::getPose,
                         new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
                         new SimpleMotorFeedforward(
@@ -153,9 +145,6 @@ public class RobotContainer {
                         m_robotDrive::tankDriveVolts,
                         m_robotDrive);
 
-         */
-
-
-        //return new AutoCommand(m_robotDrive).andThen(new WaitCommand(2)).andThen(new AutoReverseCommand(m_robotDrive));
+        return ramseteSimpleMoveForwardCommand;
     }
 }
