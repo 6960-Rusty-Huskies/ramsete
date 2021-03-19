@@ -21,9 +21,10 @@ public class DriveSubsystem extends SubsystemBase {
                     new WPI_TalonSRX(DriveConstants.kLeftMotor2Port));
 
     // The motors on the right side of the drive.
+    private final WPI_TalonSRX rightMotor1 = new WPI_TalonSRX(DriveConstants.kRightMotor1Port);
     private final SpeedControllerGroup m_rightMotors =
             new SpeedControllerGroup(
-                    new WPI_TalonSRX(DriveConstants.kRightMotor1Port),
+                    rightMotor1,
                     new WPI_TalonSRX(DriveConstants.kRightMotor2Port));
 
     // The robot's drive
@@ -44,7 +45,7 @@ public class DriveSubsystem extends SubsystemBase {
                     DriveConstants.kRightEncoderReversed);
 
     // The gyro sensor
-    private final PigeonIMU m_gyro = new PigeonIMU(leftMotor1);
+    private final PigeonIMU m_gyro = new PigeonIMU(rightMotor1);
 
     // Odometry class for tracking robot pose
     private final DifferentialDriveOdometry m_odometry;
