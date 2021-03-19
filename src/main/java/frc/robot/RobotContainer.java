@@ -123,6 +123,9 @@ public class RobotContainer {
                         m_robotDrive::tankDriveVolts,
                         m_robotDrive);
 
+        m_robotDrive.zeroHeading();
+        m_robotDrive.resetEncoders();
+
         // Reset odometry to the starting pose of the trajectory.
         m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 

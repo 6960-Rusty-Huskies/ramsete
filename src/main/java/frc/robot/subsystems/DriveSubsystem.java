@@ -1,29 +1,30 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import com.ctre.phoenix.motorcontrol.can.*;
+import com.ctre.phoenix.sensors.*;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PWMSparkMax;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.geometry.*;
+import edu.wpi.first.wpilibj.smartdashboard.*;
 import frc.robot.Constants.DriveConstants;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
     // The motors on the left side of the drive.
+    private final WPI_TalonSRX leftMotor1 = new WPI_TalonSRX(DriveConstants.kLeftMotor1Port);
     private final SpeedControllerGroup m_leftMotors =
             new SpeedControllerGroup(
-                    new PWMSparkMax(DriveConstants.kLeftMotor1Port),
-                    new PWMSparkMax(DriveConstants.kLeftMotor2Port));
+                    leftMotor1,
+                    new WPI_TalonSRX(DriveConstants.kLeftMotor2Port));
 
     // The motors on the right side of the drive.
     private final SpeedControllerGroup m_rightMotors =
             new SpeedControllerGroup(
-                    new PWMSparkMax(DriveConstants.kRightMotor1Port),
-                    new PWMSparkMax(DriveConstants.kRightMotor2Port));
+                    new WPI_TalonSRX(DriveConstants.kRightMotor1Port),
+                    new WPI_TalonSRX(DriveConstants.kRightMotor2Port));
 
     // The robot's drive
     private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
@@ -43,7 +44,7 @@ public class DriveSubsystem extends SubsystemBase {
                     DriveConstants.kRightEncoderReversed);
 
     // The gyro sensor
-    private final Gyro m_gyro = new ADXRS450_Gyro();
+    private final PigeonIMU m_gyro = new PigeonIMU(leftMotor1);
 
     // Odometry class for tracking robot pose
     private final DifferentialDriveOdometry m_odometry;
@@ -55,14 +56,17 @@ public class DriveSubsystem extends SubsystemBase {
         m_rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
 
         resetEncoders();
-        m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
+        m_odometry = new DifferentialDriveOdometry(getRotation2d());
     }
 
     @Override
     public void periodic() {
         // Update the odometry in the periodic block
-        m_odometry.update(
-                m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+        m_odometry.update(getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+
+        SmartDashboard.putNumber("Heading", getHeading());
+        SmartDashboard.putNumber("leftEncoder", m_leftEncoder.getDistance());
+        SmartDashboard.putNumber("rightEncoder", m_rightEncoder.getDistance());
     }
 
     /**
@@ -90,7 +94,7 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public void resetOdometry(Pose2d pose) {
         resetEncoders();
-        m_odometry.resetPosition(pose, m_gyro.getRotation2d());
+        m_odometry.resetPosition(pose, getRotation2d());
     }
 
     /**
@@ -159,7 +163,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     /** Zeroes the heading of the robot. */
     public void zeroHeading() {
-        m_gyro.reset();
+        m_gyro.setFusedHeading(0);
     }
 
     /**
@@ -168,15 +172,11 @@ public class DriveSubsystem extends SubsystemBase {
      * @return the robot's heading in degrees, from -180 to 180
      */
     public double getHeading() {
-        return m_gyro.getRotation2d().getDegrees();
+        return m_gyro.getFusedHeading();
     }
 
-    /**
-     * Returns the turn rate of the robot.
-     *
-     * @return The turn rate of the robot, in degrees per second
-     */
-    public double getTurnRate() {
-        return -m_gyro.getRate();
+    public Rotation2d getRotation2d() {
+        return Rotation2d.fromDegrees(getHeading());
     }
+
 }
