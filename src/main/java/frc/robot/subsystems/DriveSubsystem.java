@@ -51,6 +51,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     /** Creates a new DriveSubsystem. */
     public DriveSubsystem() {
+        m_leftMotors.setInverted(true);
+        m_rightMotors.setInverted(true);
         // Sets the distance per pulse for the encoders
         m_leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
         m_rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
@@ -107,6 +109,11 @@ public class DriveSubsystem extends SubsystemBase {
         m_drive.arcadeDrive(fwd, rot);
     }
 
+
+    public void tankDrive(double left, double right) {
+        m_drive.tankDrive(left, right);
+    }
+
     /**
      * Controls the left and right sides of the drive directly with voltages.
      *
@@ -114,8 +121,8 @@ public class DriveSubsystem extends SubsystemBase {
      * @param rightVolts the commanded right output
      */
     public void tankDriveVolts(double leftVolts, double rightVolts) {
-        m_leftMotors.setVoltage(leftVolts);
-        m_rightMotors.setVoltage(-rightVolts);
+        m_leftMotors.setVoltage(-leftVolts);
+        m_rightMotors.setVoltage(rightVolts);
         m_drive.feed();
     }
 
