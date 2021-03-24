@@ -40,6 +40,8 @@ public class RobotContainer {
     // The driver's controller
     XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
+    Trajectory trajectory;
+
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         // Configure the button bindings
@@ -65,6 +67,13 @@ public class RobotContainer {
                                         m_driverController.getY(GenericHID.Hand.kLeft),
                                         m_driverController.getY(GenericHID.Hand.kRight)),
                         m_robotDrive));
+
+        try {
+            trajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/paths/barrels.wpilib.json"));
+        } catch (IOException ioe) {
+            DriverStation.reportError("Unable to open trajectory!", ioe.getStackTrace());
+        }
+
     }
 
     /**
@@ -88,9 +97,6 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
 
 
-        try {
-            Trajectory trajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/paths/barrels.wpilib.json"));
-
             RamseteCommand ramseteCommand =
                     new RamseteCommand(
                             trajectory,
@@ -113,10 +119,6 @@ public class RobotContainer {
 
             // Run path following command, then stop at the end.
             return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
-        } catch (IOException ioe) {
-            DriverStation.reportError("Unable to open trajectory!", ioe.getStackTrace());
-            return null;
-        }
 
         /*
 
