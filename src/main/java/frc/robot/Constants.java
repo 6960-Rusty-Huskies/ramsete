@@ -51,7 +51,7 @@ public final class Constants {
         public static final double ksVolts = 1.1;
         public static final double kvVoltSecondsPerMeter = 1.369;
         public static final double kaVoltSecondsSquaredPerMeter = 0.005;
-        public static final double kPDriveVel = .994;
+        public static final double kPDriveVel = 1.1;
 
         // Newer values from Tyler
         /*
