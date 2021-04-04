@@ -12,9 +12,11 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+
 public class DriveSubsystem extends SubsystemBase {
     // The motors on the left side of the drive.
     private final WPI_TalonSRX leftMotor1 = new WPI_TalonSRX(DriveConstants.kLeftMotor1Port);
+    private final WPI_TalonSRX stickbotGyro = leftMotor1;
     private final SpeedControllerGroup m_leftMotors =
             new SpeedControllerGroup(
                     leftMotor1,
@@ -22,6 +24,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     // The motors on the right side of the drive.
     private final WPI_TalonSRX rightMotor1 = new WPI_TalonSRX(DriveConstants.kRightMotor1Port);
+    private final WPI_TalonSRX productionBotGyro = rightMotor1;
     private final SpeedControllerGroup m_rightMotors =
             new SpeedControllerGroup(
                     rightMotor1,
@@ -45,10 +48,18 @@ public class DriveSubsystem extends SubsystemBase {
                     DriveConstants.kRightEncoderReversed);
 
     // The gyro sensor
-    private final PigeonIMU m_gyro = new PigeonIMU(rightMotor1);
+    private final PigeonIMU m_gyro = new PigeonIMU(productionBotGyro);
 
     // Odometry class for tracking robot pose
     private final DifferentialDriveOdometry m_odometry;
+
+    /*
+    private final PhotonCamera rustyCam = new PhotonCamera("RustyCam");
+    static final double kCameraHeight = 0.3; // meters
+    static final double kCameraPitch = 0.0; // radians
+    static final double kTargetHeight = 0.0; // meters
+
+     */
 
     /** Creates a new DriveSubsystem. */
     public DriveSubsystem() {
@@ -60,6 +71,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         resetEncoders();
         m_odometry = new DifferentialDriveOdometry(getRotation2d());
+
     }
 
     @Override
@@ -70,6 +82,30 @@ public class DriveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Heading", getHeading());
         SmartDashboard.putNumber("leftEncoder", m_leftEncoder.getDistance());
         SmartDashboard.putNumber("rightEncoder", m_rightEncoder.getDistance());
+
+        /*
+        PhotonPipelineResult result = rustyCam.getLatestResult();
+        if (result.hasTargets()) {
+            SmartDashboard.putNumber("Tracked Targets", result.getTargets().size());
+            PhotonTrackedTarget target1 = result.getTargets().get(0);
+            double distanceMeters = PhotonUtils.calculateDistanceToTargetMeters(
+                    kCameraHeight, kTargetHeight, kCameraPitch, Math.toRadians(target1.getPitch()));
+            SmartDashboard.putString("Target1", "Distance[" + distanceMeters + "]");
+            if (result.getTargets().size() > 1) {
+                PhotonTrackedTarget target2 = result.getTargets().get(1);
+                double distanceMeters2 = PhotonUtils.calculateDistanceToTargetMeters(
+                        kCameraHeight, kTargetHeight, kCameraPitch, Math.toRadians(target2.getPitch()));
+                SmartDashboard.putString("Target2", "Distance[" + distanceMeters2 + "]");
+            }
+            if (result.getTargets().size() > 2) {
+                PhotonTrackedTarget target3 = result.getTargets().get(2);
+                double distanceMeters3 = PhotonUtils.calculateDistanceToTargetMeters(
+                        kCameraHeight, kTargetHeight, kCameraPitch, Math.toRadians(target3.getPitch()));
+                SmartDashboard.putString("Target3", "Distance[" + distanceMeters3 + "]");
+            }
+        }
+
+         */
     }
 
     /**

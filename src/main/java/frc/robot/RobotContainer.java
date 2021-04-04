@@ -9,23 +9,14 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Constants.*;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.*;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -40,7 +31,16 @@ public class RobotContainer {
     // The driver's controller
     XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
-    Trajectory trajectory;
+    Trajectory barrelsTrajectory;
+    Trajectory bounceSeg1Trajectory;
+    Trajectory bounceSeg2Trajectory;
+    Trajectory bounceSeg3Trajectory;
+    Trajectory bounceSeg4Trajectory;
+    Trajectory slalomTrajectory;
+
+    Command barrelsCommand;
+    Command bounceCommand;
+    Command slalomCommand;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -69,7 +69,130 @@ public class RobotContainer {
                         m_robotDrive));
 
         try {
-            trajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/paths/barrels.wpilib.json"));
+            barrelsTrajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/paths/barrels.wpilib.json"));
+            bounceSeg1Trajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/paths/bounceSeg1.wpilib.json"));
+            bounceSeg2Trajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/paths/bounceSeg2.wpilib.json"));
+            bounceSeg3Trajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/paths/bounceSeg3.wpilib.json"));
+            bounceSeg4Trajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/paths/bounceSeg4.wpilib.json"));
+            slalomTrajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/paths/slalom.wpilib.json"));
+
+            barrelsCommand = new SequentialCommandGroup(
+                    new InstantCommand(() -> {
+                        m_robotDrive.resetOdometry(barrelsTrajectory.getInitialPose());
+                    }),
+                    new RamseteCommand(
+                            barrelsTrajectory,
+                            m_robotDrive::getPose,
+                            new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+                            new SimpleMotorFeedforward(
+                                    Constants.DriveConstants.ksVolts,
+                                    Constants.DriveConstants.kvVoltSecondsPerMeter,
+                                    Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                            Constants.DriveConstants.kDriveKinematics,
+                            m_robotDrive::getWheelSpeeds,
+                            new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                            new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                            // RamseteCommand passes volts to the callback
+                            m_robotDrive::tankDriveVolts,
+                            m_robotDrive),
+                    new InstantCommand(() -> {
+                        m_robotDrive.tankDriveVolts(0, 0);
+                    })
+            );
+
+            bounceCommand = new SequentialCommandGroup(
+                    new InstantCommand(() -> {
+                        m_robotDrive.resetOdometry(bounceSeg1Trajectory.getInitialPose());
+                    }),
+                    new RamseteCommand(
+                            bounceSeg1Trajectory,
+                            m_robotDrive::getPose,
+                            new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+                            new SimpleMotorFeedforward(
+                                    Constants.DriveConstants.ksVolts,
+                                    Constants.DriveConstants.kvVoltSecondsPerMeter,
+                                    Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                            Constants.DriveConstants.kDriveKinematics,
+                            m_robotDrive::getWheelSpeeds,
+                            new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                            new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                            // RamseteCommand passes volts to the callback
+                            m_robotDrive::tankDriveVolts,
+                            m_robotDrive),
+                    new RamseteCommand(
+                            bounceSeg2Trajectory,
+                            m_robotDrive::getPose,
+                            new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+                            new SimpleMotorFeedforward(
+                                    Constants.DriveConstants.ksVolts,
+                                    Constants.DriveConstants.kvVoltSecondsPerMeter,
+                                    Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                            Constants.DriveConstants.kDriveKinematics,
+                            m_robotDrive::getWheelSpeeds,
+                            new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                            new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                            // RamseteCommand passes volts to the callback
+                            m_robotDrive::tankDriveVolts,
+                            m_robotDrive),
+                    new RamseteCommand(
+                            bounceSeg3Trajectory,
+                            m_robotDrive::getPose,
+                            new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+                            new SimpleMotorFeedforward(
+                                    Constants.DriveConstants.ksVolts,
+                                    Constants.DriveConstants.kvVoltSecondsPerMeter,
+                                    Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                            Constants.DriveConstants.kDriveKinematics,
+                            m_robotDrive::getWheelSpeeds,
+                            new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                            new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                            // RamseteCommand passes volts to the callback
+                            m_robotDrive::tankDriveVolts,
+                            m_robotDrive),
+                    new RamseteCommand(
+                            bounceSeg4Trajectory,
+                            m_robotDrive::getPose,
+                            new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+                            new SimpleMotorFeedforward(
+                                    Constants.DriveConstants.ksVolts,
+                                    Constants.DriveConstants.kvVoltSecondsPerMeter,
+                                    Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                            Constants.DriveConstants.kDriveKinematics,
+                            m_robotDrive::getWheelSpeeds,
+                            new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                            new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                            // RamseteCommand passes volts to the callback
+                            m_robotDrive::tankDriveVolts,
+                            m_robotDrive),
+                    new InstantCommand(() -> {
+                        m_robotDrive.tankDriveVolts(0, 0);
+                    })
+            );
+
+            slalomCommand = new SequentialCommandGroup(
+                    new InstantCommand(() -> {
+                        m_robotDrive.resetOdometry(slalomTrajectory.getInitialPose());
+                    }),
+                    new RamseteCommand(
+                            slalomTrajectory,
+                            m_robotDrive::getPose,
+                            new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+                            new SimpleMotorFeedforward(
+                                    Constants.DriveConstants.ksVolts,
+                                    Constants.DriveConstants.kvVoltSecondsPerMeter,
+                                    Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
+                            Constants.DriveConstants.kDriveKinematics,
+                            m_robotDrive::getWheelSpeeds,
+                            new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                            new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
+                            // RamseteCommand passes volts to the callback
+                            m_robotDrive::tankDriveVolts,
+                            m_robotDrive),
+                    new InstantCommand(() -> {
+                        m_robotDrive.tankDriveVolts(0, 0);
+                    })
+        );
+
         } catch (IOException ioe) {
             DriverStation.reportError("Unable to open trajectory!", ioe.getStackTrace());
         }
@@ -96,29 +219,11 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
 
+        //return barrelsCommand;
 
-            RamseteCommand ramseteCommand =
-                    new RamseteCommand(
-                            trajectory,
-                            m_robotDrive::getPose,
-                            new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
-                            new SimpleMotorFeedforward(
-                                    Constants.DriveConstants.ksVolts,
-                                    Constants.DriveConstants.kvVoltSecondsPerMeter,
-                                    Constants.DriveConstants.kaVoltSecondsSquaredPerMeter),
-                            Constants.DriveConstants.kDriveKinematics,
-                            m_robotDrive::getWheelSpeeds,
-                            new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
-                            new PIDController(Constants.DriveConstants.kPDriveVel, 0, 0),
-                            // RamseteCommand passes volts to the callback
-                            m_robotDrive::tankDriveVolts,
-                            m_robotDrive);
+        //return bounceCommand;
 
-            // Reset odometry to the starting pose of the trajectory.
-            m_robotDrive.resetOdometry(trajectory.getInitialPose());
-
-            // Run path following command, then stop at the end.
-            return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+        return slalomCommand;
 
         /*
 
