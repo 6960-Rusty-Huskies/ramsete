@@ -68,6 +68,7 @@ public class RobotContainer {
                                         m_driverController.getY(GenericHID.Hand.kRight)),
                         m_robotDrive));
 
+        /*
         try {
             barrelsTrajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/paths/barrels.wpilib.json"));
             bounceSeg1Trajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/paths/bounceSeg1.wpilib.json"));
@@ -197,6 +198,8 @@ public class RobotContainer {
             DriverStation.reportError("Unable to open trajectory!", ioe.getStackTrace());
         }
 
+         */
+
     }
 
     /**
@@ -219,11 +222,13 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
 
+        return null;
+
         //return barrelsCommand;
 
         //return bounceCommand;
 
-        return slalomCommand;
+        //return slalomCommand;
 
         /*
 

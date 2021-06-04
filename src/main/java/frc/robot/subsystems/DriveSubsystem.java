@@ -48,7 +48,7 @@ public class DriveSubsystem extends SubsystemBase {
                     DriveConstants.kRightEncoderReversed);
 
     // The gyro sensor
-    private final PigeonIMU m_gyro = new PigeonIMU(productionBotGyro);
+    private final PigeonIMU m_gyro = new PigeonIMU(stickbotGyro);
 
     // Odometry class for tracking robot pose
     private final DifferentialDriveOdometry m_odometry;
